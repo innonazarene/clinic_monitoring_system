@@ -1,0 +1,230 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { ref, watch, computed } from 'vue';
+
+const props = defineProps({
+    departments: Array,
+    personnel: { type: Object, default: null },
+});
+
+const isEdit = computed(() => !!props.personnel);
+
+const form = useForm({
+    employee_id: props.personnel?.employee_id || '',
+    name: props.personnel?.name || '',
+    birthdate: props.personnel?.birthdate ? props.personnel.birthdate.split('T')[0] : '',
+    address: props.personnel?.address || '',
+    age: props.personnel?.age || '',
+    sex: props.personnel?.sex || '',
+    civil_status: props.personnel?.civil_status || '',
+    religion: props.personnel?.religion || '',
+    department_id: props.personnel?.department_id || '',
+    position: props.personnel?.position || '',
+    contact_no: props.personnel?.contact_no || '',
+    emergency_contact_person: props.personnel?.emergency_contact_person || '',
+    emergency_contact_relationship: props.personnel?.emergency_contact_relationship || '',
+    emergency_contact_address: props.personnel?.emergency_contact_address || '',
+    emergency_contact_no: props.personnel?.emergency_contact_no || '',
+    examination_date: props.personnel?.medical_record?.examination_date ? props.personnel.medical_record.examination_date.split('T')[0] : '',
+    height_cm: props.personnel?.medical_record?.height_cm || '',
+    weight_kg: props.personnel?.medical_record?.weight_kg || '',
+    pulse_rate: props.personnel?.medical_record?.pulse_rate || '',
+    respiratory_rate: props.personnel?.medical_record?.respiratory_rate || '',
+    blood_pressure: props.personnel?.medical_record?.blood_pressure || '',
+    oxygen_saturation: props.personnel?.medical_record?.oxygen_saturation || '',
+    smoker: props.personnel?.medical_record?.smoker || false,
+    alcoholic: props.personnel?.medical_record?.alcoholic || false,
+    allergies: props.personnel?.medical_record?.allergies || '',
+    food_allergy: props.personnel?.medical_record?.food_allergy || false,
+    drug_allergy: props.personnel?.medical_record?.drug_allergy || false,
+    past_medical_history: props.personnel?.medical_record?.past_medical_history || '',
+    family_hpn: props.personnel?.medical_record?.family_hpn || false,
+    family_cancer: props.personnel?.medical_record?.family_cancer || false,
+    family_asthma: props.personnel?.medical_record?.family_asthma || false,
+    family_dm: props.personnel?.medical_record?.family_dm || false,
+    physician_name: props.personnel?.medical_record?.physician_name || '',
+    physician_license_no: props.personnel?.medical_record?.physician_license_no || '',
+    physician_ptr: props.personnel?.medical_record?.physician_ptr || '',
+    license_expiry_date: props.personnel?.medical_record?.license_expiry_date ? props.personnel.medical_record.license_expiry_date.split('T')[0] : '',
+});
+
+const bmi = computed(() => {
+    if (form.height_cm > 0 && form.weight_kg > 0) {
+        const hm = form.height_cm / 100;
+        return (form.weight_kg / (hm * hm)).toFixed(2);
+    }
+    return null;
+});
+
+const bmiCategory = computed(() => {
+    if (!bmi.value) return '';
+    const v = parseFloat(bmi.value);
+    if (v < 18.5) return 'Underweight';
+    if (v < 25) return 'Normal';
+    if (v < 30) return 'Overweight';
+    return 'Obese';
+});
+
+const bmiColor = computed(() => {
+    const c = { 'Underweight': 'text-yellow-600 bg-yellow-50', 'Normal': 'text-green-600 bg-green-50', 'Overweight': 'text-orange-600 bg-orange-50', 'Obese': 'text-red-600 bg-red-50' };
+    return c[bmiCategory.value] || 'text-gray-500 bg-gray-50';
+});
+
+watch(() => form.birthdate, (val) => {
+    if (val) {
+        const today = new Date();
+        const birth = new Date(val);
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+        form.age = age;
+    }
+});
+
+const submit = () => {
+    if (isEdit.value) {
+        form.put(route('personnel.update', props.personnel.id));
+    } else {
+        form.post(route('personnel.store'));
+    }
+};
+</script>
+
+<template>
+    <Head :title="isEdit ? 'Edit Personnel' : 'Add Personnel'" />
+    <AuthenticatedLayout>
+        <template #header>{{ isEdit ? 'Edit Personnel' : 'Add Personnel' }}</template>
+        <form @submit.prevent="submit" class="max-w-5xl space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-navy-800">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider">Personnel Data</h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Employee ID *</label>
+                        <input v-model="form.employee_id" type="text" required class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" />
+                        <p v-if="form.errors.employee_id" class="text-xs text-red-500 mt-1">{{ form.errors.employee_id }}</p>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Full Name *</label>
+                        <input v-model="form.name" type="text" required class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Birthdate</label>
+                        <input v-model="form.birthdate" type="date" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Age</label>
+                        <input v-model="form.age" type="number" readonly class="w-full text-sm rounded-lg border-gray-100 bg-gray-50" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Sex</label>
+                        <select v-model="form.sex" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500">
+                            <option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Address</label>
+                        <input v-model="form.address" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Civil Status</label>
+                        <select v-model="form.civil_status" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500">
+                            <option value="">Select</option><option value="Single">Single</option><option value="Married">Married</option><option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Religion</label>
+                        <input v-model="form.religion" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Department *</label>
+                        <select v-model="form.department_id" required class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500">
+                            <option value="">Select</option>
+                            <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.code }} - {{ dept.name }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Position</label>
+                        <input v-model="form.position" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Contact No.</label>
+                        <input v-model="form.contact_no" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-navy-800"><h3 class="text-sm font-bold text-white uppercase tracking-wider">In Case of Emergency</h3></div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Contact Person</label><input v-model="form.emergency_contact_person" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Relationship</label><input v-model="form.emergency_contact_relationship" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Address</label><input v-model="form.emergency_contact_address" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Contact No.</label><input v-model="form.emergency_contact_no" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-navy-800"><h3 class="text-sm font-bold text-white uppercase tracking-wider">Medical Record</h3></div>
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Date Examined</label><input v-model="form.examination_date" type="date" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Height (cm)</label><input v-model="form.height_cm" type="number" step="0.1" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Weight (kg)</label><input v-model="form.weight_kg" type="number" step="0.1" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">BMI (Auto)</label>
+                            <div class="flex items-center gap-2">
+                                <input :value="bmi || ''" type="text" readonly class="w-full text-sm rounded-lg border-gray-100 bg-gray-50 font-bold" />
+                                <span v-if="bmiCategory" :class="bmiColor" class="px-2 py-1 rounded-lg text-xs font-bold whitespace-nowrap">{{ bmiCategory }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Pulse Rate</label><input v-model="form.pulse_rate" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Respiratory Rate</label><input v-model="form.respiratory_rate" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Blood Pressure</label><input v-model="form.blood_pressure" type="text" placeholder="120/80" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">O₂ Sat (%)</label><input v-model="form.oxygen_saturation" type="number" step="0.1" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-3">
+                            <p class="text-xs font-bold text-gray-700 uppercase">Lifestyle</p>
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.smoker" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> Smoker</label>
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.alcoholic" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> Alcoholic</label>
+                        </div>
+                        <div class="space-y-3">
+                            <p class="text-xs font-bold text-gray-700 uppercase">Allergies</p>
+                            <div><label class="block text-xs text-gray-600 mb-1">Specify Allergies</label><input v-model="form.allergies" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.food_allergy" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> Food Allergy</label>
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.drug_allergy" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> Drug Allergy</label>
+                        </div>
+                    </div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Past Medical History</label><textarea v-model="form.past_medical_history" rows="2" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500"></textarea></div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-700 uppercase mb-3">Family History</p>
+                        <div class="flex flex-wrap gap-6">
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.family_hpn" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> HPN</label>
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.family_cancer" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> Cancer</label>
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.family_asthma" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> Asthma</label>
+                            <label class="flex items-center gap-2 text-sm"><input v-model="form.family_dm" type="checkbox" class="rounded border-gray-300 text-mustard-500 focus:ring-mustard-500" /> DM</label>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">School Physician</label><input v-model="form.physician_name" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">License No.</label><input v-model="form.physician_license_no" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">PTR</label><input v-model="form.physician_ptr" type="text" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">License Expiry</label><input v-model="form.license_expiry_date" type="date" class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500" /></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3">
+                <a :href="route('personnel.index')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">Cancel</a>
+                <button type="submit" :disabled="form.processing" class="px-6 py-2.5 text-sm font-bold text-white rounded-lg shadow-sm hover:shadow-md disabled:opacity-50 transition-all" style="background: linear-gradient(135deg, #1b2a4a, #2d4a7a);">
+                    {{ form.processing ? 'Saving...' : (isEdit ? 'Update' : 'Save') }}
+                </button>
+            </div>
+        </form>
+    </AuthenticatedLayout>
+</template>
