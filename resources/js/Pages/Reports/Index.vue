@@ -11,9 +11,15 @@ const treatmentForm = useForm({ date_from: '', date_to: '', department_id: '' })
 const medicineForm = useForm({ date_from: '', date_to: '' });
 const deptForm = useForm({ department_id: '' });
 
-const generateTreatment = () => treatmentForm.post(route('reports.treatment-summary'), { preserveScroll: true });
-const generateMedicine = () => medicineForm.post(route('reports.medicine-usage'), { preserveScroll: true });
-const generateDept = () => deptForm.post(route('reports.department'), { preserveScroll: true });
+const generateTreatment = () => {
+    window.location.href = route('reports.treatment-summary', treatmentForm.data());
+};
+const generateMedicine = () => {
+    window.location.href = route('reports.medicine-usage', medicineForm.data());
+};
+const generateDept = () => {
+    window.location.href = route('reports.department', deptForm.data());
+};
 </script>
 
 <template>

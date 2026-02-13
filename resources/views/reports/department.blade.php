@@ -23,8 +23,17 @@
 </head>
 <body>
     <div class="header">
-        <h1>Merchant Marine Academy of Caraga, Inc.</h1>
-        <h2>Department Report - {{ $department->full_name }} ({{ $department->code }})</h2>
+        <table style="border: none; margin-bottom: 0;">
+            <tr>
+                <td style="border: none; width: 80px; text-align: left; padding: 0;">
+                    <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents(public_path('images/logo.jpg'))) }}" style="width: 70px;">
+                </td>
+                <td style="border: none; text-align: center; padding: 0;">
+                    <h1 style="margin-left: -70px;">Merchant Marine Academy of Caraga, Inc.</h1>
+                    <h2 style="margin-left: -70px;">Department Report - {{ $department->full_name }} ({{ $department->code }})</h2>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="meta">
         <strong>Generated:</strong> {{ now()->format('M d, Y h:i A') }}

@@ -41,9 +41,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Reports
     Route::get('/reports', [ReportController::class , 'index'])->name('reports.index');
-    Route::post('/reports/treatment-summary', [ReportController::class , 'treatmentSummary'])->name('reports.treatment-summary');
-    Route::post('/reports/medicine-usage', [ReportController::class , 'medicineUsage'])->name('reports.medicine-usage');
-    Route::post('/reports/department', [ReportController::class , 'departmentReport'])->name('reports.department');
+    Route::get('/reports/treatment-summary', [ReportController::class , 'treatmentSummary'])->name('reports.treatment-summary');
+    Route::get('/reports/medicine-usage', [ReportController::class , 'medicineUsage'])->name('reports.medicine-usage');
+    Route::get('/reports/department', [ReportController::class , 'departmentReport'])->name('reports.department');
 
     // Profile
     Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');

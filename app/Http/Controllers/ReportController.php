@@ -35,11 +35,11 @@ class ReportController extends Controller
             ->latest('treated_at')
             ->get()
             ->map(function ($t) {
-                $patient = $t->patient;
-                $t->patient_name = $patient ? $patient->name : 'Unknown';
-                $t->patient_type_label = str_contains($t->patient_type, 'Student') ? 'Student' : 'Personnel';
-                return $t;
-            });
+            $patient = $t->patient;
+            $t->patient_name = $patient ? $patient->name : 'Unknown';
+            $t->patient_type_label = str_contains($t->patient_type, 'Student') ? 'Student' : 'Personnel';
+            return $t;
+        });
 
         $topDiagnoses = Treatment::whereDate('treated_at', '>=', $request->date_from)
             ->whereDate('treated_at', '<=', $request->date_to)
@@ -50,6 +50,7 @@ class ReportController extends Controller
             ->get();
 
         $pdf = Pdf::loadView('reports.treatment-summary', [
+            'department' => $request->department_id ?Department::find($request->department_id) : null,
             'treatments' => $treatments,
             'topDiagnoses' => $topDiagnoses,
             'dateFrom' => $request->date_from,
@@ -72,10 +73,10 @@ class ReportController extends Controller
             ->latest('dispensed_at')
             ->get()
             ->map(function ($log) {
-                $patient = $log->patient;
-                $log->patient_name = $patient ? $patient->name : 'Unknown';
-                return $log;
-            });
+            $patient = $log->patient;
+            $log->patient_name = $patient ? $patient->name : 'Unknown';
+            return $log;
+        });
 
         $topMedicines = MedicineLog::whereDate('dispensed_at', '>=', $request->date_from)
             ->whereDate('dispensed_at', '<=', $request->date_to)
@@ -111,10 +112,10 @@ class ReportController extends Controller
             ->get();
 
         $bmiStats = [
-            'underweight' => $students->filter(fn ($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Underweight')->count(),
-            'normal' => $students->filter(fn ($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Normal')->count(),
-            'overweight' => $students->filter(fn ($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Overweight')->count(),
-            'obese' => $students->filter(fn ($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Obese')->count(),
+            'underweight' => $students->filter(fn($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Underweight')->count(),
+            'normal' => $students->filter(fn($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Normal')->count(),
+            'overweight' => $students->filter(fn($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Overweight')->count(),
+            'obese' => $students->filter(fn($s) => $s->medicalRecord && $s->medicalRecord->bmi_category === 'Obese')->count(),
         ];
 
         $pdf = Pdf::loadView('reports.department', [

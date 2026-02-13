@@ -30,7 +30,7 @@ const submit = () => {
     <AuthenticatedLayout>
         <template #header>Dispense Medicine</template>
 
-        <form @submit.prevent="submit" class="max-w-2xl">
+        <form @submit.prevent="submit" class="w-full">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-mustard-500">
                     <h3 class="text-sm font-bold text-navy-900 uppercase tracking-wider">Dispense Form</h3>

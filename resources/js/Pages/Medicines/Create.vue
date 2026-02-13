@@ -27,7 +27,7 @@ const submit = () => {
     <AuthenticatedLayout>
         <template #header>{{ isEdit ? 'Edit Medicine' : 'Add New Medicine' }}</template>
 
-        <form @submit.prevent="submit" class="max-w-2xl">
+        <form @submit.prevent="submit">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-navy-800">
                     <h3 class="text-sm font-bold text-white uppercase tracking-wider">Medicine Information</h3>

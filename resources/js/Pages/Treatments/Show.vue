@@ -10,7 +10,7 @@ defineProps({ treatment: Object });
     <AuthenticatedLayout>
         <template #header>Treatment Details</template>
 
-        <div class="max-w-2xl">
+        <div class="max-w-full">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-navy-800 flex items-center justify-between">
                     <h3 class="text-sm font-bold text-white uppercase tracking-wider">Treatment Record</h3>
