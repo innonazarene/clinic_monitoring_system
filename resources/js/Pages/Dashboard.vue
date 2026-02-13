@@ -95,7 +95,7 @@ const statCards = [
         </div>
 
         <!-- Stat Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div v-for="card in statCards" :key="card.key"
                 class="rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
                 :class="'bg-gradient-to-br ' + card.color">

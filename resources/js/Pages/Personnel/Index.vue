@@ -51,9 +51,11 @@ const deletePersonnel = (id) => {
             </Link>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Personel Table -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-navy-800 text-white">
                             <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Employee ID</th>
@@ -110,5 +112,6 @@ const deletePersonnel = (id) => {
                 </div>
             </div>
         </div>
+    </div>
     </AuthenticatedLayout>
 </template>

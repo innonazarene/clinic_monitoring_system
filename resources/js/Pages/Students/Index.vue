@@ -51,7 +51,7 @@ const deleteStudent = (id) => {
 
         <!-- Top Bar -->
         <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap sm:flex-row items-center gap-3">
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -82,72 +82,74 @@ const deleteStudent = (id) => {
         </div>
 
         <!-- Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-navy-800 text-white">
-                            <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">ID</th>
-                            <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Name</th>
-                            <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Department</th>
-                            <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Course</th>
-                            <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Sex</th>
-                            <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">BMI</th>
-                            <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Allergies</th>
-                            <th class="px-4 py-3 text-center font-medium text-xs uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        <tr v-for="student in students.data" :key="student.id" class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-4 py-3 font-mono text-xs text-gray-500">{{ student.student_id_number }}</td>
-                            <td class="px-4 py-3 font-medium text-gray-800">{{ student.name }}</td>
-                            <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-medium bg-navy-100 text-navy-800">{{ student.department?.code }}</span></td>
-                            <td class="px-4 py-3 text-gray-600 text-xs">{{ student.course?.name || '-' }}</td>
-                            <td class="px-4 py-3 text-gray-600">{{ student.sex || '-' }}</td>
-                            <td class="px-4 py-3">
-                                <span v-if="student.medical_record?.bmi_category" :class="bmiColor(student.medical_record.bmi_category)"
-                                    class="px-2 py-0.5 rounded-full text-xs font-medium">
-                                    {{ student.medical_record.bmi }} - {{ student.medical_record.bmi_category }}
-                                </span>
-                                <span v-else class="text-xs text-gray-400">No record</span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span v-if="student.medical_record?.allergies || student.medical_record?.food_allergy || student.medical_record?.drug_allergy"
-                                    class="px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">⚠ Has Allergies</span>
-                                <span v-else class="text-xs text-gray-400">None</span>
-                            </td>
-                            <td class="px-4 py-3 text-center">
-                                <div class="flex items-center justify-center gap-1">
-                                    <Link :href="route('students.show', student.id)" class="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="View">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                    </Link>
-                                    <Link :href="route('students.edit', student.id)" class="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 transition-colors" title="Edit">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                    </Link>
-                                    <button @click="deleteStudent(student.id)" class="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors" title="Delete">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr v-if="!students.data?.length">
-                            <td colspan="8" class="px-4 py-12 text-center text-gray-400">No students found</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
+            <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-navy-800 text-white">
+                                <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">ID</th>
+                                <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Name</th>
+                                <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Department</th>
+                                <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Course</th>
+                                <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Sex</th>
+                                <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">BMI</th>
+                                <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Allergies</th>
+                                <th class="px-4 py-3 text-center font-medium text-xs uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <tr v-for="student in students.data" :key="student.id" class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-4 py-3 font-mono text-xs text-gray-500">{{ student.student_id_number }}</td>
+                                <td class="px-4 py-3 font-medium text-gray-800">{{ student.name }}</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-medium bg-navy-100 text-navy-800">{{ student.department?.code }}</span></td>
+                                <td class="px-4 py-3 text-gray-600 text-xs">{{ student.course?.name || '-' }}</td>
+                                <td class="px-4 py-3 text-gray-600">{{ student.sex || '-' }}</td>
+                                <td class="px-4 py-3">
+                                    <span v-if="student.medical_record?.bmi_category" :class="bmiColor(student.medical_record.bmi_category)"
+                                        class="px-2 py-0.5 rounded-full text-xs font-medium">
+                                        {{ student.medical_record.bmi }} - {{ student.medical_record.bmi_category }}
+                                    </span>
+                                    <span v-else class="text-xs text-gray-400">No record</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span v-if="student.medical_record?.allergies || student.medical_record?.food_allergy || student.medical_record?.drug_allergy"
+                                        class="px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">⚠ Has Allergies</span>
+                                    <span v-else class="text-xs text-gray-400">None</span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <Link :href="route('students.show', student.id)" class="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="View">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        </Link>
+                                        <Link :href="route('students.edit', student.id)" class="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 transition-colors" title="Edit">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        </Link>
+                                        <button @click="deleteStudent(student.id)" class="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors" title="Delete">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-if="!students.data?.length">
+                                <td colspan="8" class="px-4 py-12 text-center text-gray-400">No students found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Pagination -->
-            <div v-if="students.links?.length > 3" class="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
-                <p class="text-xs text-gray-500">Showing {{ students.from }} to {{ students.to }} of {{ students.total }}</p>
-                <div class="flex gap-1">
-                    <template v-for="link in students.links" :key="link.label">
-                        <Link v-if="link.url" :href="link.url"
-                            :class="link.active ? 'bg-navy-800 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'"
-                            class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-                            v-html="link.label" />
-                        <span v-else class="px-3 py-1 text-xs text-gray-300" v-html="link.label" />
-                    </template>
+                <!-- Pagination -->
+                <div v-if="students.links?.length > 3" class="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
+                    <p class="text-xs text-gray-500">Showing {{ students.from }} to {{ students.to }} of {{ students.total }}</p>
+                    <div class="flex gap-1">
+                        <template v-for="link in students.links" :key="link.label">
+                            <Link v-if="link.url" :href="link.url"
+                                :class="link.active ? 'bg-navy-800 text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'"
+                                class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+                                v-html="link.label" />
+                            <span v-else class="px-3 py-1 text-xs text-gray-300" v-html="link.label" />
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
