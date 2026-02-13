@@ -144,7 +144,7 @@ const uploadDoc = () => {
         </div>
 
         <!-- Treatments Tab -->
-        <div v-if="activeTab === 'treatments'">
+        <div v-if="activeTab === 'treatments'" class="grid grid-cols-1 gap-6">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">

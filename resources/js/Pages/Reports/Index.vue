@@ -27,7 +27,7 @@ const generateDept = () => {
     <AuthenticatedLayout>
         <template #header>Reports</template>
 
-        <div class="max-w-3xl space-y-6">
+        <div class="w-full space-y-6">
             <!-- Report Type Tabs -->
             <div class="flex gap-1 bg-white rounded-lg p-1 shadow-sm border border-gray-100 w-fit">
                 <button v-for="tab in [{key:'treatment', label:'Treatment Summary'}, {key:'medicine', label:'Medicine Usage'}, {key:'department', label:'Department Report'}]"

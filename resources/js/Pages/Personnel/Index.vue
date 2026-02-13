@@ -51,9 +51,9 @@ const deletePersonnel = (id) => {
             </Link>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 gap-6">
             <!-- Personel Table -->
-            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                     <thead>
