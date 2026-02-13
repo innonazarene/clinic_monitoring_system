@@ -31,6 +31,6 @@ class Treatment extends Model
 
     public function treatedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class , 'treated_by');
+        return $this->belongsTo(User::class, 'treated_by');
     }
 }

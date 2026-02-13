@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Models\Department;
-use App\Models\Course;
 use App\Models\MedicalRecord;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -186,7 +185,7 @@ class StudentController extends Controller
         }
 
         $student->medicalRecord()->updateOrCreate(
-        ['recordable_type' => Student::class , 'recordable_id' => $student->id],
+            ['recordable_type' => Student::class , 'recordable_id' => $student->id],
             $medicalData
         );
 

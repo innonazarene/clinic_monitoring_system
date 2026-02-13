@@ -19,8 +19,8 @@ class DashboardController extends Controller
         $departmentId = $request->get('department_id');
 
         // Stats
-        $studentsCount = Student::when($departmentId, fn($q) => $q->where('department_id', $departmentId))->count();
-        $personnelCount = Personnel::when($departmentId, fn($q) => $q->where('department_id', $departmentId))->count();
+        $studentsCount = Student::when($departmentId, fn ($q) => $q->where('department_id', $departmentId))->count();
+        $personnelCount = Personnel::when($departmentId, fn ($q) => $q->where('department_id', $departmentId))->count();
         $treatmentsCount = Treatment::count();
         $medicinesCount = Medicine::count();
 
@@ -51,11 +51,11 @@ class DashboardController extends Controller
             ->limit(5)
             ->get()
             ->map(function ($t) {
-            $patient = $t->patient;
-            $t->patient_name = $patient ? $patient->name : 'Unknown';
-            $t->patient_type_label = str_contains($t->patient_type, 'Student') ? 'Student' : 'Personnel';
-            return $t;
-        });
+                $patient = $t->patient;
+                $t->patient_name = $patient ? $patient->name : 'Unknown';
+                $t->patient_type_label = str_contains($t->patient_type, 'Student') ? 'Student' : 'Personnel';
+                return $t;
+            });
 
         $departments = Department::all();
 

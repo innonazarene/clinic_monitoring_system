@@ -35,16 +35,16 @@ class Personnel extends Model
 
     public function medicalRecord(): MorphOne
     {
-        return $this->morphOne(MedicalRecord::class , 'recordable');
+        return $this->morphOne(MedicalRecord::class, 'recordable');
     }
 
     public function treatments(): MorphMany
     {
-        return $this->morphMany(Treatment::class , 'patient');
+        return $this->morphMany(Treatment::class, 'patient');
     }
 
     public function medicineLogs(): MorphMany
     {
-        return $this->morphMany(MedicineLog::class , 'patient');
+        return $this->morphMany(MedicineLog::class, 'patient');
     }
 }

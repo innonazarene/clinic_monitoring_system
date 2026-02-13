@@ -35,6 +35,6 @@ class MedicineLog extends Model
 
     public function dispenser(): BelongsTo
     {
-        return $this->belongsTo(User::class , 'dispensed_by');
+        return $this->belongsTo(User::class, 'dispensed_by');
     }
 }

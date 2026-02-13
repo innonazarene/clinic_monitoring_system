@@ -173,7 +173,7 @@ class PersonnelController extends Controller
         }
 
         $personnel->medicalRecord()->updateOrCreate(
-        ['recordable_type' => Personnel::class , 'recordable_id' => $personnel->id],
+            ['recordable_type' => Personnel::class , 'recordable_id' => $personnel->id],
             $medicalData
         );
 

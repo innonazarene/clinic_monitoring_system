@@ -9,7 +9,6 @@ use App\Http\Controllers\MaritimeDocumentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect()->route('login');

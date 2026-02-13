@@ -59,11 +59,11 @@ class MedicalRecord extends Model
         $bmi = round($weightKg / ($heightM * $heightM), 2);
 
         $category = match (true) {
-                $bmi < 18.5 => 'Underweight',
-                $bmi < 25.0 => 'Normal',
-                $bmi < 30.0 => 'Overweight',
-                default => 'Obese',
-            };
+            $bmi < 18.5 => 'Underweight',
+            $bmi < 25.0 => 'Normal',
+            $bmi < 30.0 => 'Overweight',
+            default => 'Obese',
+        };
 
         return ['bmi' => $bmi, 'category' => $category];
     }
