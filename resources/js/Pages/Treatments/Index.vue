@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
+import { formatDateTime } from '@/utils/dateFormat';
 
 const props = defineProps({
     treatments: Object,
@@ -71,7 +72,7 @@ const deleteTreatment = (id) => { if (confirm('Delete this treatment record?')) 
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             <tr v-for="t in treatments.data" :key="t.id" class="hover:bg-gray-50/50 transition-colors">
-                                <td class="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{{ t.treated_at }}</td>
+                                <td class="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{{ formatDateTime(t.treated_at) }}</td>
                                 <td class="px-4 py-3 font-medium text-gray-800">{{ t.patient_name }}</td>
                                 <td class="px-4 py-3"><span :class="t.patient_type_label === 'Student' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'" class="px-2 py-0.5 text-xs rounded-full font-medium">{{ t.patient_type_label }}</span></td>
                                 <td class="px-4 py-3 text-gray-700">{{ t.diagnosis }}</td>

@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { formatDateTime } from '@/utils/dateFormat';
 
 defineProps({ treatment: Object });
 </script>
@@ -27,7 +28,7 @@ defineProps({ treatment: Object });
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-xs text-gray-500 mb-1">Date & Time</p>
-                            <p class="text-sm font-bold text-gray-800">{{ treatment.treated_at }}</p>
+                            <p class="text-sm font-bold text-gray-800">{{ formatDateTime(treatment.treated_at) }}</p>
                             <p class="text-xs text-gray-500 mt-1">By: {{ treatment.treated_by_user?.name || '-' }}</p>
                         </div>
                     </div>

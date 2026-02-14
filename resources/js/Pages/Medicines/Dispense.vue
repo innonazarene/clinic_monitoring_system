@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import SearchablePatientSelect from '@/Components/SearchablePatientSelect.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
@@ -7,6 +8,7 @@ const props = defineProps({
     medicines: Array,
     students: Array,
     personnel: Array,
+    departments: Array,
 });
 
 const form = useForm({
@@ -59,10 +61,12 @@ const submit = () => {
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Patient *</label>
-                            <select v-model="form.patient_id" required class="w-full text-sm rounded-lg border-gray-200 focus:ring-mustard-500 focus:border-mustard-500">
-                                <option value="">Select Patient</option>
-                                <option v-for="p in patientList" :key="p.id" :value="p.id">{{ p.name }} ({{ p.student_id_number || p.employee_id }})</option>
-                            </select>
+                            <SearchablePatientSelect
+                                v-model="form.patient_id"
+                                :patients="patientList"
+                                :departments="departments"
+                                :patient-type="form.patient_type"
+                            />
                         </div>
                     </div>
 

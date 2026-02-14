@@ -15,19 +15,19 @@ class TreatmentController extends Controller
     {
         $treatments = Treatment::with('treatedBy')
             ->when($request->search, function ($q, $search) {
-                $q->where('diagnosis', 'like', "%{$search}%");
-            })
-            ->when($request->date_from, fn ($q, $d) => $q->whereDate('treated_at', '>=', $d))
-            ->when($request->date_to, fn ($q, $d) => $q->whereDate('treated_at', '<=', $d))
+            $q->where('diagnosis', 'like', "%{$search}%");
+        })
+            ->when($request->date_from, fn($q, $d) => $q->whereDate('treated_at', '>=', $d))
+            ->when($request->date_to, fn($q, $d) => $q->whereDate('treated_at', '<=', $d))
             ->latest('treated_at')
             ->paginate(15)
             ->withQueryString()
             ->through(function ($t) {
-                $patient = $t->patient;
-                $t->patient_name = $patient ? $patient->name : 'Unknown';
-                $t->patient_type_label = str_contains($t->patient_type, 'Student') ? 'Student' : 'Personnel';
-                return $t;
-            });
+            $patient = $t->patient;
+            $t->patient_name = $patient ? $patient->name : 'Unknown';
+            $t->patient_type_label = str_contains($t->patient_type, 'Student') ? 'Student' : 'Personnel';
+            return $t;
+        });
 
         return Inertia::render('Treatments/Index', [
             'treatments' => $treatments,
@@ -39,8 +39,11 @@ class TreatmentController extends Controller
     public function create()
     {
         return Inertia::render('Treatments/Create', [
-            'students' => Student::select('id', 'name', 'student_id_number')->get(),
-            'personnel' => Personnel::select('id', 'name', 'employee_id')->get(),
+            'students' => Student::select('id', 'name', 'student_id_number', 'department_id')
+            ->with('department:id,name,code')->get(),
+            'personnel' => Personnel::select('id', 'name', 'employee_id', 'department_id')
+            ->with('department:id,name,code')->get(),
+            'departments' => Department::select('id', 'name', 'code')->get(),
         ]);
     }
 

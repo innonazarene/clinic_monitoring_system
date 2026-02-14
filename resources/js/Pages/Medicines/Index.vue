@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch, onMounted } from 'vue';
 import { Chart, registerables } from 'chart.js';
+import { formatDate } from '@/utils/dateFormat';
 
 Chart.register(...registerables);
 
@@ -47,9 +48,9 @@ const stockColor = (m) => {
 </script>
 
 <template>
-    <Head title="Medicine Logbook" />
+    <Head title="Dispensing Log" />
     <AuthenticatedLayout>
-        <template #header>Medicine Logbook</template>
+        <template #header>Dispensing Log</template>
 
         <!-- Top Actions -->
         <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -66,7 +67,7 @@ const stockColor = (m) => {
             <div class="flex items-center gap-2">
                 <Link :href="route('medicines.logs')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-navy-700 bg-navy-50 hover:bg-navy-100 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    Dispensing Log
+                    Medicine Log Book
                 </Link>
                 <Link :href="route('medicines.dispense.form')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-navy-800 shadow-sm hover:shadow-md transition-all" style="background: linear-gradient(135deg, #f0c040, #d4a017);">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -105,7 +106,7 @@ const stockColor = (m) => {
                                     <span :class="stockColor(m)" class="px-2 py-0.5 rounded-full text-xs font-bold">{{ m.stock_quantity }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-gray-600 text-xs">{{ m.unit }}</td>
-                                <td class="px-4 py-3 text-xs" :class="m.expiry_date && new Date(m.expiry_date) < new Date() ? 'text-red-500 font-bold' : 'text-gray-500'">{{ m.expiry_date || '-' }}</td>
+                                <td class="px-4 py-3 text-xs" :class="m.expiry_date && new Date(m.expiry_date) < new Date() ? 'text-red-500 font-bold' : 'text-gray-500'">{{ m.expiry_date ? formatDate(m.expiry_date) : '-' }}</td>
                                 <td class="px-4 py-3 text-center">
                                     <div class="flex items-center justify-center gap-1">
                                         <Link :href="route('medicines.edit', m.id)" class="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></Link>

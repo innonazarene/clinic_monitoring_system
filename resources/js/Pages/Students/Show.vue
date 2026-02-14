@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { formatDate, formatDateTime } from '@/utils/dateFormat';
 
 const props = defineProps({ student: Object });
 
@@ -64,7 +65,7 @@ const uploadDoc = () => {
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <h3 class="text-sm font-bold text-gray-800 mb-4 uppercase tracking-wider">Personal Information</h3>
                 <dl class="space-y-3 text-sm">
-                    <div class="flex justify-between"><dt class="text-gray-500">Birthdate</dt><dd class="font-medium">{{ student.birthdate || '-' }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-gray-500">Birthdate</dt><dd class="font-medium">{{ formatDate(student.birthdate) }}</dd></div>
                     <div class="flex justify-between"><dt class="text-gray-500">Age</dt><dd class="font-medium">{{ student.age || '-' }}</dd></div>
                     <div class="flex justify-between"><dt class="text-gray-500">Sex</dt><dd class="font-medium">{{ student.sex || '-' }}</dd></div>
                     <div class="flex justify-between"><dt class="text-gray-500">Civil Status</dt><dd class="font-medium">{{ student.civil_status || '-' }}</dd></div>
@@ -159,7 +160,7 @@ const uploadDoc = () => {
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             <tr v-for="t in student.treatments" :key="t.id" class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-gray-500">{{ t.treated_at }}</td>
+                                <td class="px-4 py-3 text-gray-500">{{ formatDateTime(t.treated_at) }}</td>
                                 <td class="px-4 py-3 font-medium">{{ t.diagnosis }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ t.treatment_given || '-' }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ t.treated_by_user?.name || '-' }}</td>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Medicine;
 use App\Models\MedicineLog;
 use App\Models\Student;
@@ -18,7 +19,7 @@ class MedicineController extends Controller
             $q->where('name', 'like', "%{$search}%")
                 ->orWhere('category', 'like', "%{$search}%");
         })
-            ->when($request->category, fn ($q, $cat) => $q->where('category', $cat))
+            ->when($request->category, fn($q, $cat) => $q->where('category', $cat))
             ->latest()
             ->paginate(15)
             ->withQueryString();
@@ -94,8 +95,11 @@ class MedicineController extends Controller
     {
         return Inertia::render('Medicines/Dispense', [
             'medicines' => Medicine::where('stock_quantity', '>', 0)->get(),
-            'students' => Student::select('id', 'name', 'student_id_number')->get(),
-            'personnel' => Personnel::select('id', 'name', 'employee_id')->get(),
+            'students' => Student::select('id', 'name', 'student_id_number', 'department_id')
+            ->with('department:id,name,code')->get(),
+            'personnel' => Personnel::select('id', 'name', 'employee_id', 'department_id')
+            ->with('department:id,name,code')->get(),
+            'departments' => Department::select('id', 'name', 'code')->get(),
         ]);
     }
 
@@ -137,23 +141,27 @@ class MedicineController extends Controller
     public function logs(Request $request)
     {
         $logs = MedicineLog::with(['medicine:id,name', 'dispenser:id,name'])
-            ->when($request->medicine_id, fn ($q, $id) => $q->where('medicine_id', $id))
-            ->when($request->date_from, fn ($q, $d) => $q->whereDate('dispensed_at', '>=', $d))
-            ->when($request->date_to, fn ($q, $d) => $q->whereDate('dispensed_at', '<=', $d))
+            ->when($request->medicine_id, fn($q, $id) => $q->where('medicine_id', $id))
+            ->when($request->patient_type, function ($q, $type) {
+            $class = $type === 'student' ? 'App\\Models\\Student' : 'App\\Models\\Personnel';
+            $q->where('patient_type', $class);
+        })
+            ->when($request->date_from, fn($q, $d) => $q->whereDate('dispensed_at', '>=', $d))
+            ->when($request->date_to, fn($q, $d) => $q->whereDate('dispensed_at', '<=', $d))
             ->latest('dispensed_at')
             ->paginate(20)
             ->withQueryString()
             ->through(function ($log) {
-                $patient = $log->patient;
-                $log->patient_name = $patient ? $patient->name : 'Unknown';
-                $log->patient_type_label = str_contains($log->patient_type, 'Student') ? 'Student' : 'Personnel';
-                return $log;
-            });
+            $patient = $log->patient;
+            $log->patient_name = $patient ? $patient->name : 'Unknown';
+            $log->patient_type_label = str_contains($log->patient_type, 'Student') ? 'Student' : 'Personnel';
+            return $log;
+        });
 
         return Inertia::render('Medicines/Logs', [
             'logs' => $logs,
             'medicines' => Medicine::select('id', 'name')->get(),
-            'filters' => $request->only(['medicine_id', 'date_from', 'date_to']),
+            'filters' => $request->only(['medicine_id', 'patient_type', 'date_from', 'date_to']),
         ]);
     }
 }
