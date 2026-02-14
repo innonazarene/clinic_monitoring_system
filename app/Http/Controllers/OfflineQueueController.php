@@ -55,15 +55,13 @@ class OfflineQueueController extends Controller
                 'success' => true,
                 'message' => $result['message'],
             ]);
-        }
-        catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed: ' . implode(', ', collect($e->errors())->flatten()->toArray()),
             ], 422);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
