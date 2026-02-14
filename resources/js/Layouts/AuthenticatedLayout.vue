@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
+import OfflineStatusBanner from '@/Components/OfflineStatusBanner.vue';
 
 const showSidebar = ref(true);
 const showMobileMenu = ref(false);
@@ -151,6 +152,8 @@ const isActive = (routeName) => {
 
             <!-- Page content -->
             <main class="flex-1 p-4 lg:p-6">
+                <!-- Offline status banner -->
+                <OfflineStatusBanner />
                 <!-- Flash messages -->
                 <div v-if="$page.props.flash?.success" class="mb-4 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm flex items-center gap-2">
                     <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

@@ -1,7 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
+import { useOfflineQueue } from '@/utils/offlineQueue';
 
 const props = defineProps({ medicine: { type: Object, default: null } });
 const isEdit = computed(() => !!props.medicine);
@@ -16,9 +17,20 @@ const form = useForm({
     expiry_date: props.medicine?.expiry_date ? props.medicine.expiry_date.split('T')[0] : '',
 });
 
-const submit = () => {
-    if (isEdit.value) form.put(route('medicines.update', props.medicine.id));
-    else form.post(route('medicines.store'));
+const { isOnline, addToQueue } = useOfflineQueue();
+const offlineQueued = ref(false);
+
+const submit = async () => {
+    if (isEdit.value) {
+        form.put(route('medicines.update', props.medicine.id));
+    } else if (isOnline.value) {
+        form.post(route('medicines.store'));
+    } else {
+        await addToQueue('medicine', route('medicines.store'), form.data());
+        offlineQueued.value = true;
+        form.reset();
+        setTimeout(() => { offlineQueued.value = false; }, 4000);
+    }
 };
 </script>
 
@@ -26,6 +38,20 @@ const submit = () => {
     <Head :title="isEdit ? 'Edit Medicine' : 'Add Medicine'" />
     <AuthenticatedLayout>
         <template #header>{{ isEdit ? 'Edit Medicine' : 'Add New Medicine' }}</template>
+
+        <!-- Offline queued success message -->
+        <transition enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 -translate-y-2" enter-to-class="opacity-100 translate-y-0"
+                    leave-active-class="transition-all duration-200 ease-in" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-2">
+            <div v-if="offlineQueued" class="mb-4 px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-200/60 backdrop-blur-sm flex items-center gap-3 shadow-sm">
+                <div class="w-9 h-9 rounded-lg bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-amber-700">Medicine queued offline</p>
+                    <p class="text-xs text-amber-500/80">It will sync automatically when you reconnect.</p>
+                </div>
+            </div>
+        </transition>
 
         <form @submit.prevent="submit">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -79,7 +105,7 @@ const submit = () => {
             <div class="flex items-center justify-end gap-3 mt-6">
                 <a :href="route('medicines.index')" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">Cancel</a>
                 <button type="submit" :disabled="form.processing" class="px-6 py-2.5 text-sm font-bold text-white rounded-lg shadow-sm hover:shadow-md disabled:opacity-50 transition-all" style="background: linear-gradient(135deg, #1b2a4a, #2d4a7a);">
-                    {{ form.processing ? 'Saving...' : (isEdit ? 'Update Medicine' : 'Add Medicine') }}
+                    {{ form.processing ? 'Saving...' : (isEdit ? 'Update Medicine' : (isOnline ? 'Add Medicine' : '📥 Queue Offline')) }}
                 </button>
             </div>
         </form>

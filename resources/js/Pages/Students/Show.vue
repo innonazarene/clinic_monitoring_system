@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { formatDate, formatDateTime } from '@/utils/dateFormat';
+import { useOfflineQueue } from '@/utils/offlineQueue';
 
 const props = defineProps({ student: Object });
 
@@ -13,13 +14,40 @@ const bmiColor = (category) => {
 
 const activeTab = ref('overview');
 
+const { isOnline, addToQueue } = useOfflineQueue();
+const offlineQueued = ref(false);
+
 // Maritime document upload
 const docForm = useForm({ file: null, description: '' });
-const uploadDoc = () => {
-    docForm.post(route('maritime.store', props.student.id), {
-        onSuccess: () => { docForm.reset(); },
-        forceFormData: true,
+
+const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
     });
+};
+
+const uploadDoc = async () => {
+    if (isOnline.value) {
+        docForm.post(route('maritime.store', props.student.id), {
+            onSuccess: () => { docForm.reset(); },
+            forceFormData: true,
+        });
+    } else {
+        const fileBase64 = await fileToBase64(docForm.file);
+        await addToQueue('maritime_document', route('maritime.store', props.student.id), {
+            student_id: props.student.id,
+            file_base64: fileBase64,
+            file_name: docForm.file.name,
+            file_type: docForm.file.type,
+            description: docForm.description,
+        });
+        offlineQueued.value = true;
+        docForm.reset();
+        setTimeout(() => { offlineQueued.value = false; }, 4000);
+    }
 };
 </script>
 
@@ -197,8 +225,12 @@ const uploadDoc = () => {
                     <button type="submit" :disabled="docForm.processing || !docForm.file"
                         class="mt-3 px-4 py-2 text-sm font-medium text-white rounded-lg disabled:opacity-50"
                         style="background: linear-gradient(135deg, #1b2a4a, #2d4a7a);">
-                        Upload Document
+                        {{ isOnline ? 'Upload Document' : '📥 Queue Offline' }}
                     </button>
+                    <transition enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0" enter-to-class="opacity-100"
+                                leave-active-class="transition-all duration-200 ease-in" leave-from-class="opacity-100" leave-to-class="opacity-0">
+                        <p v-if="offlineQueued" class="mt-2 text-sm font-semibold text-amber-600">📥 Document queued offline — will sync when reconnected.</p>
+                    </transition>
                 </form>
 
                 <!-- Document list -->
