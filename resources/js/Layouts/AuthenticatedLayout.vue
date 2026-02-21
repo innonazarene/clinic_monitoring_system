@@ -43,7 +43,7 @@ const isActive = (routeName) => {
                     <img src="/images/logo.jpg" alt="MMACI Logo" class="flex-shrink-0 rounded-full object-cover" :class="showSidebar ? 'w-12 h-12' : 'w-10 h-10'" />
                     <div v-if="showSidebar" class="transition-opacity duration-200 min-w-0">
                         <h1 class="text-xs font-bold leading-tight text-mustard-400 uppercase tracking-wide">Merchant Marine Academy of Caraga, Inc.</h1>
-                        <p class="text-[10px] text-gray-400 mt-0.5">Clinic Monitoring System</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">Clinic Health Monitoring System</p>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@ const isActive = (routeName) => {
                     <img src="/images/logo.jpg" alt="MMACI Logo" class="w-12 h-12 rounded-full object-cover flex-shrink-0" />
                     <div>
                         <h1 class="text-xs font-bold text-mustard-400 uppercase tracking-wide leading-tight">Merchant Marine Academy of Caraga, Inc.</h1>
-                        <p class="text-[10px] text-gray-400 mt-0.5">Clinic Monitoring System</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">Clinic Health Monitoring System</p>
                     </div>
                 </div>
                 <button @click="showMobileMenu = false" class="text-gray-400 hover:text-white">
